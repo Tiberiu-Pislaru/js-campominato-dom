@@ -1,80 +1,142 @@
-
-// CAMPOMINATO
+// CAMPO MINATO
 
 //per prima cosa ho creato delle variabili che userò più avanti nel codice
-// le prime quattro variabili riguardano gli elementi del html
+// le prime otto variabili riguardano gli elementi del html
 // le tre variabili 'lenghtlevel' riguardano la lunghezza dalla grid
-// le successive tre sono per check, per controllare se un bottone è stato cliccato
+// successivamente ho usato la destrutturazione per questi di leggibilità
+// le ultimi variabili servono per la visualizzazione dei dati sullo schermo
 const containerBig = document.querySelector('.container');
+const finalBox = document.getElementById('lose');
 const level1 = document.getElementById('level-1');
 const level2 = document.getElementById('level-2');
 const level3 = document.getElementById('level-3');
+const buttonAgain= document.getElementById('again');
+const messagge= document.getElementById('mess-gameOver');
+const result= document.getElementById('result');
 const lenghtLevel1=100;
 const lenghtLevel2=81;
 const lenghtLevel3=49;
-let checkLevel1= false;
-let checkLevel2= false;
-let checkLevel3= false;
+let [checkLevel1, checkLevel2, checkLevel3]= [false, false, false];
+let numbersBomb = [];
+let maxTry=0;
+let score=0;
+
+// funzione che serve per controllare se ho preso una bomba
+function isABomb(listToCheck, value){
+    return listToCheck.includes(value);
+}
 
 // questa funzione serve per aggiungere una dimensione al container
-//  in base al livello scekto
+//  in base al livello scelto
 function dimensionContainer(container){
     if(checkLevel1){
         
         container.classList.remove('width-2');
         container.classList.remove('width-3');
-        
         container.classList.add('width-1');
     }
     else if(checkLevel2){
+
         container.classList.add('width-2');
         container.classList.remove('width-1');
         container.classList.remove('width-3');
     }
     else{ 
+
         container.classList.add('width-3');
         container.classList.remove('width-2');
         container.classList.remove('width-1');
     }
 }
 
+// funzione che serve per mostrare la schermata di Game Over
+function gameOver(text, clas){
+    // i argomenti text e clas sono due stringhe
+    finalBox.classList.add('block');
+    messagge.innerHTML = text;
+    result.innerHTML = `Il tuo punteggio è ${score}`;
+    finalBox.classList.add(clas);
+}
+
 // questa funzione serve per creare i vari box nel container
+// con i valori numerici e il testo al loro interno
+// tramite .value ho assegnato a ogni box un valore numeri (index)
+// dentro il ciclo if del addEventListener ho fatto in modo che
+// se io cliccavo su un box che aveva come valore (value) un numero presente nell'array numbersBomb
+// doveva fare certe cose sotto indicate
+// altrimenti aumentava il mio punteggio di 1
+// il secondo if serve per controllare
+// se il mio punteggio equivale alle mosse disponibili
 function createBox(container, index) {
+    
     const square = document.createElement('div');
     square.className = 'box';
-    console.log(square);
     square.innerHTML = index;
+    square.value = index;
     container.append(square);
+
     square.addEventListener('click', function () {
         this.classList.add('lightBlue');
+        if (isABomb(numbersBomb, this.value)){
+            this.style.backgroundColor= 'red';
+            gameOver('Hai perso', 'lose');
+
+        }else{
+            score++;
+        }
+        if (score === maxTry){
+            gameOver('Complimenti hai visto', 'win');
+
+        }
     })
 }
 
 // questa è la funzione che tramite un "for" usa una delle variabili lenght
 // e la inserisce come valore massimo
-function maxDimension(maxNumber, func){
+function maxDimension(maxNumber,containerGame, func){
 
     for (let i = 1; i <= maxNumber; i++) {
 
-        func(containerBig, i);
-
+        func(containerGame, i);
     }
 }
 
+//queste due funzioni servono che creare numeri random e per popolare la variabile numbersBomb 
+function getRandom(min, max) {
+    return Math.floor(Math.random() * ((max + 1) - min)) + min
+}
+
+function randomNumInDifRange(minNum, maxNum, func, array){
+    
+    while (array.length < 16) {
+    
+        let random = func(minNum, maxNum);
+    
+        if (!array.includes(random)) {
+    
+            array.push(random);
+    
+        }
+    }
+}
 
 // in questa ultima parte invece ci sono i vari event listener
 // uno per ogni bottone
 // all'interno di ognuno ho aggiunto un if per controllare che se il bottone
 // è stato cliccato di non reaggire a un click successivo,
-// a meno che l'utente non abbia cliccato un altro bottone prima  
+// a meno che l'utente non abbia cliccato un altro bottone prima 
+// all'interno dei primi 3 eventListener viene chiamata la funzione che serve per popolare
+// la variabile numbersBomb
+// e anche un' operazione per sapere il numero massimo di tentativi 
 level1.addEventListener('click', function(){
     if(!checkLevel1){
         containerBig.innerHTML='';
-        checkLevel1= true;
-        checkLevel2=false;
-        checkLevel3=false;
+        [checkLevel1, checkLevel2, checkLevel3]= [true, false, false];
+        randomNumInDifRange(1, lenghtLevel1, getRandom, numbersBomb);
+        maxTry=lenghtLevel1 - numbersBomb.length;
+        // console.log(maxTry);
         dimensionContainer(containerBig);
-        maxDimension(lenghtLevel1, createBox);
+        maxDimension(lenghtLevel1,containerBig, createBox);
 
     }
 });
@@ -82,23 +144,36 @@ level1.addEventListener('click', function(){
 level2.addEventListener('click', function(){
     if (!checkLevel2) {
         containerBig.innerHTML = '';
-        checkLevel2 = true;
-        checkLevel1 = false;
-        checkLevel3 = false;
+        [checkLevel1, checkLevel2, checkLevel3] = [false, true, false];
+        randomNumInDifRange(1, lenghtLevel2, getRandom, numbersBomb);
+        maxTry = lenghtLevel2 - numbersBomb.length;
         dimensionContainer(containerBig);
-        maxDimension(lenghtLevel2, createBox);
+        maxDimension(lenghtLevel2, containerBig, createBox);
     }
 });
 
 level3.addEventListener('click', function(){
     if(!checkLevel3){
         containerBig.innerHTML = '';
-        checkLevel3 = true;
-        checkLevel2 = false;
-        checkLevel1 = false;
+        [checkLevel1, checkLevel2, checkLevel3] = [false, false, true];
+        randomNumInDifRange(1, lenghtLevel3, getRandom, numbersBomb);
+        maxTry = lenghtLevel3 - numbersBomb.length;
 
         dimensionContainer(containerBig);
-        maxDimension(lenghtLevel3, createBox);
+        maxDimension(lenghtLevel3, containerBig, createBox);
     }
 });
+
+// questo bottone sarà visibile solo durante la schermata di Game Over
+// serve per cominciare una nuova partita
+buttonAgain.addEventListener('click', function(){
+    finalBox.classList.remove('block');
+    containerBig.innerHTML='';
+    finalBox.classList.remove('win');
+    finalBox.classList.remove('lose');
+    numbersBomb=[];
+    [checkLevel1, checkLevel2, checkLevel3] = [false, false, false];
+
+})
+
 
