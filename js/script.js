@@ -5,7 +5,7 @@
 // le tre variabili 'lenghtlevel' riguardano la lunghezza dalla grid
 // successivamente ho usato la destrutturazione per questi di leggibilità
 // le ultimi variabili servono per la visualizzazione dei dati sullo schermo
-const containerBig = document.querySelector('.container');
+const containerBig = document.getElementById('container');
 const finalBox = document.getElementById('lose');
 const level1 = document.getElementById('level-1');
 const level2 = document.getElementById('level-2');
@@ -24,29 +24,6 @@ let score=0;
 // funzione che serve per controllare se ho preso una bomba
 function isABomb(listToCheck, value){
     return listToCheck.includes(value);
-}
-
-// questa funzione serve per aggiungere una dimensione al container
-//  in base al livello scelto
-function dimensionContainer(container){
-    if(checkLevel1){
-        
-        container.classList.remove('width-2');
-        container.classList.remove('width-3');
-        container.classList.add('width-1');
-    }
-    else if(checkLevel2){
-
-        container.classList.add('width-2');
-        container.classList.remove('width-1');
-        container.classList.remove('width-3');
-    }
-    else{ 
-
-        container.classList.add('width-3');
-        container.classList.remove('width-2');
-        container.classList.remove('width-1');
-    }
 }
 
 // funzione che serve per mostrare la schermata di Game Over
@@ -106,7 +83,7 @@ function getRandom(min, max) {
     return Math.floor(Math.random() * ((max + 1) - min)) + min
 }
 
-function randomNumInDifRange(minNum, maxNum, func, array){
+function randomNumInDifRange(maxNum, func, array, minNum=1){
     
     while (array.length < 16) {
     
@@ -132,10 +109,10 @@ level1.addEventListener('click', function(){
     if(!checkLevel1){
         containerBig.innerHTML='';
         [checkLevel1, checkLevel2, checkLevel3]= [true, false, false];
-        randomNumInDifRange(1, lenghtLevel1, getRandom, numbersBomb);
+        randomNumInDifRange(lenghtLevel1, getRandom, numbersBomb);
         maxTry=lenghtLevel1 - numbersBomb.length;
         // console.log(maxTry);
-        dimensionContainer(containerBig);
+        containerBig.className='width-1';
         maxDimension(lenghtLevel1,containerBig, createBox);
 
     }
@@ -145,9 +122,9 @@ level2.addEventListener('click', function(){
     if (!checkLevel2) {
         containerBig.innerHTML = '';
         [checkLevel1, checkLevel2, checkLevel3] = [false, true, false];
-        randomNumInDifRange(1, lenghtLevel2, getRandom, numbersBomb);
+        randomNumInDifRange(lenghtLevel2, getRandom, numbersBomb);
         maxTry = lenghtLevel2 - numbersBomb.length;
-        dimensionContainer(containerBig);
+        containerBig.className = 'width-2';
         maxDimension(lenghtLevel2, containerBig, createBox);
     }
 });
@@ -156,10 +133,10 @@ level3.addEventListener('click', function(){
     if(!checkLevel3){
         containerBig.innerHTML = '';
         [checkLevel1, checkLevel2, checkLevel3] = [false, false, true];
-        randomNumInDifRange(1, lenghtLevel3, getRandom, numbersBomb);
+        randomNumInDifRange(lenghtLevel3, getRandom, numbersBomb);
         maxTry = lenghtLevel3 - numbersBomb.length;
 
-        dimensionContainer(containerBig);
+        containerBig.className = 'width-3';
         maxDimension(lenghtLevel3, containerBig, createBox);
     }
 });
