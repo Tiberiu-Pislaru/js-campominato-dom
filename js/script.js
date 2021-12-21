@@ -111,6 +111,7 @@ level1.addEventListener('click', function(){
         [checkLevel1, checkLevel2, checkLevel3]= [true, false, false];
         randomNumInDifRange(lenghtLevel1, getRandom, numbersBomb);
         maxTry=lenghtLevel1 - numbersBomb.length;
+        score=0;
         // console.log(maxTry);
         containerBig.className='width-1';
         maxDimension(lenghtLevel1,containerBig, createBox);
@@ -124,6 +125,7 @@ level2.addEventListener('click', function(){
         [checkLevel1, checkLevel2, checkLevel3] = [false, true, false];
         randomNumInDifRange(lenghtLevel2, getRandom, numbersBomb);
         maxTry = lenghtLevel2 - numbersBomb.length;
+        score = 0;
         containerBig.className = 'width-2';
         maxDimension(lenghtLevel2, containerBig, createBox);
     }
@@ -135,6 +137,7 @@ level3.addEventListener('click', function(){
         [checkLevel1, checkLevel2, checkLevel3] = [false, false, true];
         randomNumInDifRange(lenghtLevel3, getRandom, numbersBomb);
         maxTry = lenghtLevel3 - numbersBomb.length;
+        score = 0;
 
         containerBig.className = 'width-3';
         maxDimension(lenghtLevel3, containerBig, createBox);
